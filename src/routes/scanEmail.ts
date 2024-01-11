@@ -3,7 +3,7 @@ import { readCSVFile } from "../lib/readFile";
 import { validateEmail } from "../lib/validateEmail";
 
 export const scanEmails = async (req:Request, res:Response) => {
-    const filePath = `${__dirname}/../public/emails.csv`;
+    const filePath = `${__dirname}/public/emails.csv`;
 
     const emails = await readCSVFile(filePath);
 
