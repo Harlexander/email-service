@@ -19,8 +19,9 @@ try {
           
           const worker = new Worker<MyJobData>('foo', async (job) => {
 
-            await new Promise(resolve => setTimeout(resolve, 1000))
+            await new Promise(resolve => setTimeout(resolve, 30000))
             console.log(job.data);
+
           }, {connection});
 
           worker.on('completed', (job) => {
@@ -34,9 +35,19 @@ try {
           async function addJobs() {
             await myQueue.add('myJobName', { foo: 'bar' });
             await myQueue.add('myJobName', { qux: 'baz' });
+            await myQueue.add('myJobName', { qux: 'bcanaz' });
+            await myQueue.add('myJobName', { qux: 'tar' });
+            await myQueue.add('myJobName', { qux: 'dan' });
+            await myQueue.add('myJobName', { foo: 'bar' });
             await myQueue.add('myJobName', { qux: 'baz' });
+            await myQueue.add('myJobName', { qux: 'bcanaz' });
+            await myQueue.add('myJobName', { qux: 'tar' });
+            await myQueue.add('myJobName', { qux: 'dan' });
+            await myQueue.add('myJobName', { foo: 'bar' });
             await myQueue.add('myJobName', { qux: 'baz' });
-            await myQueue.add('myJobName', { qux: 'baz' });
+            await myQueue.add('myJobName', { qux: 'bcanaz' });
+            await myQueue.add('myJobName', { qux: 'tar' });
+            await myQueue.add('myJobName', { qux: 'dan' });
           }
         
           await addJobs();
