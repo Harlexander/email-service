@@ -14,7 +14,7 @@ export const scanEmails = async (req:Request, res:Response) => {
     
     const startTime = performance.now();
         
-    const filePath = `${__dirname}/public/${req.body.filename}`;
+    const filePath = `./public/${req.body.filepath}`;
 
     const emails = await readCSVFile(filePath);
     
@@ -27,7 +27,7 @@ export const scanEmails = async (req:Request, res:Response) => {
     }
     
     // Write the results to a new file
-    const outputFilePath = `${__dirname}/public/validatedEmails.csv`;
+    const outputFilePath = `./public/validatedEmails.csv`;
     
     const outputLines = results.map(({ email, status }) => `${email},${status}`).join('\n');
     
