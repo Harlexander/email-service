@@ -9,9 +9,9 @@ import IORedis from 'ioredis';
 const mysql = require('mysql2');
 
 const validateDb = mysql.createPool({
-    host: 'localhost',
-    user: 'peachy',
-    password: '12345678',
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
     database: "costal-313235b529",
     connectionLimit: 10 // Adjust as needed
 });
@@ -47,17 +47,17 @@ export const toDB = async (req:Request, res:Response) => {
 
 const validateEmails = async (databaseName:string, tableName:string, file:Express.Multer.File) => {
     const pool = mysql.createPool({
-        host: 'localhost',
-        user: 'peachy',
-        password: '12345678',
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
         database: databaseName,
         connectionLimit: 10 // Adjust as needed
     });
 
     const connection = new IORedis({
-        host: 'redis-14692.c321.us-east-1-2.ec2.cloud.redislabs.com',
+        host: process.env.REDIS_HOST,
         port: 14692,
-        password : "jgIl3D0x1L32V0h8bsf5UuU4cCdZj0tJ",
+        password : process.env.REDIS_PASS,
         maxRetriesPerRequest : null
       });
        
