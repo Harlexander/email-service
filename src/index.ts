@@ -1,10 +1,10 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
-import { emailTasks } from "./routes/send-emails";
-import { scanEmails } from "./routes/scanEmail";
-
-
-const emailValidator = require('deep-email-validator');
+import { emailTasks } from "./routes/validateEmail";
+import { scanEmails } from "./routes/emailDispatch";
+import { toDB } from "./routes/insertData";
+const multer  = require('multer')
+const upload = multer({ dest: './public/uploads/' })
 
 dotenv.config();
 
@@ -17,22 +17,11 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript Server");
 });
 
-app.post("/verify-email", async (req: Request, res: Response) => {
-  const result =   await emailValidator.validate({
-    email: req.body.email,
-    validateRegex: true,
-    validateMx: true,
-    validateTypo: false,
-    validateDisposable: true,
-    validateSMTP: false,
-  })
-
-  res.send(result);
-})
-
 app.post("/task", emailTasks);
 
 app.post("/emails", scanEmails);
+
+app.post("/database", upload.single("file"), toDB);
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);

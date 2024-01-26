@@ -4,7 +4,7 @@ import { promisify } from "util";
 import { emailer } from "./nodemailer";
 import { findAndReplace } from "./findReplace";
 
-export const sendEmail = async (receiver: string[], subject:string, html:string, replace : {value : string | number , key : string}[]) => {
+export const sendEmail = async (receiver: string[], subject:string = "Testing", html:string, replace : {value : string | number , key : string}[]) => {
         const readFile = promisify(fs.readFile);
         const filePath = path.resolve("public", html);
 
@@ -16,8 +16,6 @@ export const sendEmail = async (receiver: string[], subject:string, html:string,
 
         const modifiedData = Buffer.from(htmlText);
 
-        
         await emailer(receiver, subject, modifiedData);
-
         return;
 }
