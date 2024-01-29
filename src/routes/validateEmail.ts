@@ -35,7 +35,7 @@ try {
             password : "jgIl3D0x1L32V0h8bsf5UuU4cCdZj0tJ",
             maxRetriesPerRequest : null
           });
-          
+           
           const myQueue = new Queue<MyJobData>('validate', {connection});
           
           const worker = new Worker<MyJobData>('validate', async (job) => { 

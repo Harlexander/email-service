@@ -8,10 +8,10 @@ import IORedis from 'ioredis';
 
 const mysql = require('mysql2');
 
-const validateDb = mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
+export const validateDb = mysql.createPool({
+    host: "localhost",
+    user: "peachy",
+    password: "12345678",
     database: "costal-313235b529",
     connectionLimit: 10 // Adjust as needed
 });
@@ -32,7 +32,7 @@ export const toDB = async (req:Request, res:Response) => {
                 tableName,
                 file : file?.path
             }
-
+ 
             await insertData(conn, "validation", validationData)
             
             await validateEmails(databaseName, tableName, file)            
@@ -47,9 +47,9 @@ export const toDB = async (req:Request, res:Response) => {
 
 const validateEmails = async (databaseName:string, tableName:string, file:Express.Multer.File) => {
     const pool = mysql.createPool({
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
+        host: "localhost",
+        user: "peachy",
+        password: "12345678",
         database: databaseName,
         connectionLimit: 10 // Adjust as needed
     });

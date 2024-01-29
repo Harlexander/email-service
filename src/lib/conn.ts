@@ -14,15 +14,15 @@ export const connection = new IORedis({
     maxRetriesPerRequest : null
   });
 
-const mysql = require('mysql2');
+  const mysql = require('mysql2');
 
-const pool = mysql.createPool({
-    host: 'localhost',
-    user: 'peachy',
-    password: '12345678',
-    database: 'emails_account',
-    connectionLimit: 10 // Adjust as needed
+  const validateDb = mysql.createPool({
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: "costal-313235b529",
+      connectionLimit: 10 // Adjust as needed
   });
   
-export const promisePool = pool.promise();
+export const promisePool = validateDb.promise();
   

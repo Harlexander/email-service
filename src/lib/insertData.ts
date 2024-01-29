@@ -5,10 +5,10 @@ export async function insertData(promisePool:any, tableName:string, data:Record<
         `INSERT INTO ${tableName} (${keys}) VALUES (${count})`,
         values
       );
-
+  
       console.log(`${rows.affectedRows} row(s) inserted.`);
     } catch (error) {
-      console.error('Error inserting data:', error);
+      throw new Error((error as Error).message)
     }
   }
   
