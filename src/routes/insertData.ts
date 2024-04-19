@@ -63,9 +63,9 @@ const validateEmails = async (databaseName:string, tableName:string, file:Expres
        
     const promisePool = pool.promise();
 
-    const myQueue = new Queue<MyJobData>('validate', {connection});
+    const myQueue = new Queue<MyJobData>('verify_email', {connection});
           
-    const worker = new Worker<MyJobData>('validate', async ({ data }) => { 
+    const worker = new Worker<MyJobData>('verify_email', async ({ data }) => { 
         const status = await validateEmail(data.data.email);
         status && await insertData(promisePool, data.tableName, data.data);
         return { status };
@@ -81,9 +81,7 @@ const validateEmails = async (databaseName:string, tableName:string, file:Expres
 
     if(file?.path){
         const datas = await readCSVFile(file.path);
-
         const jobs = datas.map((content: Record<string, string>) => ({ name : "validateEmail", data : { databaseName, tableName, file : file.path, data : content } }))
-
         await myQueue.addBulk(jobs)
     }
 }

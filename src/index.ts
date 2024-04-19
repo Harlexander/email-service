@@ -27,7 +27,7 @@ app.get("/", async (req: Request, res: Response) => {
   const query = 'SELECT * FROM validation';
   const data = await conn.execute(query);
 
-  const formattedData = data[0].map((data:any) => ({...data, createdAt : moment(data.createdAt).format('MMM Do YYYY, h:mm:ss a')}))
+  const formattedData = data[0].map((data:any) => ({...data, createdAt : moment(data.createdAt).format('MMM Do, h:mm:ss a')}))
 
   res.render("index", { data : formattedData });
 
