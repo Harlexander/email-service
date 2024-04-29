@@ -10,5 +10,5 @@ export const validateEmail = async (email: string) => {
         validateTypo : false
     });
 
-    return status.valid;
+    return status;
 }

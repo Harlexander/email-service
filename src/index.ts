@@ -4,6 +4,7 @@ import { emailTasks } from "./routes/validateEmail";
 import { scanEmails } from "./routes/emailDispatch";
 import { toDB, validateDb } from "./routes/insertData";
 import path from "path";
+import { verifyEmail } from "./routes/verifyEmail";
 const multer  = require('multer')
 const upload = multer({ dest: './public/uploads/' })
 const ejs = require('ejs');
@@ -39,6 +40,8 @@ app.get("/", async (req: Request, res: Response) => {
 app.post("/task", emailTasks);
 
 app.post("/emails", scanEmails);
+
+app.post("/api/verify", verifyEmail);
 
 app.post("/database", upload.single("file"), toDB);
 
