@@ -13,7 +13,7 @@ export const verifyEmail = async (req:Request, res:Response) => {
             validateRegex : true,
             validateMx : true,
             validateDisposable : true, 
-            validateSMTP : false,
+            validateSMTP : true,
             validateTypo : false
         });
 
