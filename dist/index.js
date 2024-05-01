@@ -14,29 +14,37 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const send_emails_1 = require("./routes/send-emails");
-const scanEmail_1 = require("./routes/scanEmail");
-const emailValidator = require('deep-email-validator');
+const validateEmail_1 = require("./routes/validateEmail");
+const emailDispatch_1 = require("./routes/emailDispatch");
+const insertData_1 = require("./routes/insertData");
+const path_1 = __importDefault(require("path"));
+const verifyEmail_1 = require("./routes/verifyEmail");
+const multer = require('multer');
+const upload = multer({ dest: './public/uploads/' });
+const ejs = require('ejs');
+const moment = require('moment');
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 5000;
 app.use(express_1.default.json());
-app.get("/", (req, res) => {
-    res.send("Express + TypeScript Server");
-});
-app.post("/verify-email", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield emailValidator.validate({
-        email: req.body.email,
-        validateRegex: true,
-        validateMx: true,
-        validateTypo: false,
-        validateDisposable: true,
-        validateSMTP: false,
-    });
-    res.send(result);
+app.set('views', path_1.default.join(__dirname, 'dashboard'));
+app.set('view engine', 'ejs');
+app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const conn = insertData_1.validateDb.promise();
+        const query = 'SELECT * FROM validation';
+        const data = yield conn.execute(query);
+        const formattedData = data[0].map((data) => (Object.assign(Object.assign({}, data), { createdAt: moment(data.createdAt).format('MMM Do, h:mm:ss a') })));
+        res.render("index", { data: formattedData });
+    }
+    catch (error) {
+        res.send(error.message);
+    }
 }));
-app.post("/task", send_emails_1.emailTasks);
-app.post("/emails", scanEmail_1.scanEmails);
+app.post("/task", validateEmail_1.emailTasks);
+app.post("/emails", emailDispatch_1.scanEmails);
+app.post("/api/verify", verifyEmail_1.verifyEmail);
+app.post("/database", upload.single("file"), insertData_1.toDB);
 app.listen(port, () => {
     console.log(`[server]: Server is running at http://localhost:${port}`);
 });

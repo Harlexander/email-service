@@ -18,7 +18,7 @@ const fs_1 = __importDefault(require("fs"));
 const util_1 = require("util");
 const nodemailer_1 = require("./nodemailer");
 const findReplace_1 = require("./findReplace");
-const sendEmail = (receiver, subject, html, replace) => __awaiter(void 0, void 0, void 0, function* () {
+const sendEmail = (receiver, subject = "Testing", html, replace) => __awaiter(void 0, void 0, void 0, function* () {
     const readFile = (0, util_1.promisify)(fs_1.default.readFile);
     const filePath = path_1.default.resolve("public", html);
     const htmlContent = yield readFile(filePath);

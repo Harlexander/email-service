@@ -23,6 +23,6 @@ const validateEmail = (email) => __awaiter(void 0, void 0, void 0, function* () 
         validateSMTP: false,
         validateTypo: false
     });
-    return status.valid;
+    return status;
 });
 exports.validateEmail = validateEmail;

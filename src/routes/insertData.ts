@@ -8,16 +8,17 @@ import IORedis from 'ioredis';
 
 const mysql = require('mysql2');
 
-export const validateDb = mysql.createPool({
-    host: "localhost",
-    user: "peachy",
-    password: "12345678",
-    database: "costal-313235b529",
-    connectionLimit: 10 // Adjust as needed
-});
-
 export const toDB = async (req:Request, res:Response) => {
     try {
+        const validateDb = mysql.createPool({
+            host: process.env.DB_HOST,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_DATABASE,
+            connectionLimit: 10 // Adjust as needed
+        });
+
+        
         const conn = await validateDb.promise();
         const {
             databaseName,
@@ -40,6 +41,7 @@ export const toDB = async (req:Request, res:Response) => {
 
         res.send(file?.path);            
     } catch (error) {
+        console.log((error as Error).message);
         res.status(500).send((error as Error).message);
     }
 }
@@ -47,25 +49,25 @@ export const toDB = async (req:Request, res:Response) => {
 
 const validateEmails = async (databaseName:string, tableName:string, file:Express.Multer.File) => {
     const pool = mysql.createPool({
-        host: "localhost",
-        user: "peachy",
-        password: "12345678",
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
         database: databaseName,
         connectionLimit: 10 // Adjust as needed
     });
 
     const connection = new IORedis({
         host: process.env.REDIS_HOST,
-        port: 14692,
+        port: 12188,
         password : process.env.REDIS_PASS,
         maxRetriesPerRequest : null
       });
        
     const promisePool = pool.promise();
 
-    const myQueue = new Queue<MyJobData>('verify_email', {connection});
+    const myQueue = new Queue<MyJobData>('email_verify', {connection});
           
-    const worker = new Worker<MyJobData>('verify_email', async ({ data }) => { 
+    const worker = new Worker<MyJobData>('email_verify', async ({ data }) => { 
         const status = await validateEmail(data.data.email);
         status && await insertData(promisePool, data.tableName, data.data);
         return { status };
@@ -88,6 +90,14 @@ const validateEmails = async (databaseName:string, tableName:string, file:Expres
     
 
 const recordValidation = async (values:string[], passed : boolean) => {
+    const validateDb = mysql.createPool({
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_DATABASE,
+        connectionLimit: 10 // Adjust as needed
+    });
+    
     const conn = validateDb.promise();
 
     let sql = `UPDATE validation SET validated = validated + 1`;
