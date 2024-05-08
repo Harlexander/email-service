@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { validateEmail } from "../lib/validateEmail";
 import validate from "deep-email-validator";
 
 export const verifyEmail = async (req:Request, res:Response) => {

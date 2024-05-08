@@ -36,7 +36,7 @@ export const toDB = async (req:Request, res:Response) => {
  
             await insertData(conn, "validation", validationData)
             
-            await validateEmails(databaseName, tableName, file)            
+            await validateEmails(databaseName, tableName, file, conn)            
         }
 
         res.send(file?.path);            
@@ -47,7 +47,7 @@ export const toDB = async (req:Request, res:Response) => {
 }
 
 
-const validateEmails = async (databaseName:string, tableName:string, file:Express.Multer.File) => {
+const validateEmails = async (databaseName:string, tableName:string, file:Express.Multer.File, conn:any) => {
     const pool = mysql.createPool({
         host: process.env.DB_HOST,
         user: process.env.DB_USER,
@@ -62,19 +62,20 @@ const validateEmails = async (databaseName:string, tableName:string, file:Expres
         password : process.env.REDIS_PASS,
         maxRetriesPerRequest : null
       });
-       
-    const promisePool = pool.promise();
 
-    const myQueue = new Queue<MyJobData>('email_verify', {connection});
+       
+    const promisePool = await pool.promise();
+
+    const myQueue = new Queue<MyJobData>(tableName, {connection});
           
-    const worker = new Worker<MyJobData>('email_verify', async ({ data }) => { 
+    const worker = new Worker<MyJobData>(tableName, async ({ data }) => { 
         const status = await validateEmail(data.data.email);
         status && await insertData(promisePool, data.tableName, data.data);
         return { status };
     }, { connection });
 
     worker.on('completed', async ({data}, { status }) => {
-        await recordValidation([data.databaseName, data.tableName, data.file], status)
+        await recordValidation([data.databaseName, data.tableName, data.file], status, conn)
     });
     
     worker.on('failed', (job, err) => {
@@ -89,17 +90,7 @@ const validateEmails = async (databaseName:string, tableName:string, file:Expres
 }
     
 
-const recordValidation = async (values:string[], passed : boolean) => {
-    const validateDb = mysql.createPool({
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_DATABASE,
-        connectionLimit: 10 // Adjust as needed
-    });
-    
-    const conn = validateDb.promise();
-
+const recordValidation = async (values:string[], passed : boolean, conn : any) => {
     let sql = `UPDATE validation SET validated = validated + 1`;
 
     if (passed) {
